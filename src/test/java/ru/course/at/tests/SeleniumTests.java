@@ -1,4 +1,4 @@
-package ru.course.at;
+package ru.course.at.tests;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,20 +8,21 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SeleniumTests {
 
     private WebDriver driver;
 
+    private final By inputField = By.cssSelector("#searchbox_input");
+    private final By resultLinks = By.cssSelector("h2 > a[href]");
+
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         ChromeOptions options = new ChromeOptions();
         // Fix the issue https://github.com/SeleniumHQ/selenium/issues/11750
         options.addArguments("--remote-allow-origins=*");
@@ -32,33 +33,34 @@ public class SeleniumTests {
     }
 
     @AfterEach
-    public void tearDown(){driver.quit();}
+    public void tearDown() {
+        driver.quit();
+    }
 
     @Test
-    public void search() throws InterruptedException {
+    public void searchFieldTest() {
         String input = "Selenium";
-        WebElement searchField = driver.findElement(By.cssSelector("#searchbox_input"));
+        WebElement searchField = driver.findElement(inputField);
         searchField.sendKeys(input);
         searchField.submit();
 
-        Thread.sleep(10000);
-
-        List<WebElement> result = driver.findElements(By.cssSelector("h2 > a[href]"));
-
+        List<WebElement> result = driver.findElements(resultLinks);
         clickElement(result, 0);
+
         assertEquals("https://www.selenium.dev/", driver.getCurrentUrl(), "Не та ссылка");
     }
 
     @Test
-    public void search2() {
+    public void searchResultTest() {
         String input = "Selenium";
-        WebElement searchField = driver.findElement(By.cssSelector("#searchbox_input"));
+        WebElement searchField = driver.findElement(inputField);
         searchField.sendKeys(input);
 
-        WebElement searchPageField = driver.findElement(By.cssSelector("#searchbox_input"));
+        WebElement searchPageField = driver.findElement(inputField);
         assertEquals(input, searchPageField.getAttribute("value"));
     }
 
-    public void clickElement(List<WebElement> result, int num) {result.get(num).click();}
-
+    public void clickElement(List<WebElement> result, int num) {
+        result.get(num).click();
+    }
 }
