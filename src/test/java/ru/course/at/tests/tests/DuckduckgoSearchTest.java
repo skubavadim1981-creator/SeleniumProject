@@ -1,25 +1,21 @@
-package ru.course.at.tests;
+package ru.course.at.tests.tests;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import ru.course.at.tests.pages.MainPage;
+import ru.course.at.tests.pages.ResultsPage;
 
 import java.time.Duration;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SeleniumTests {
+public class DuckduckgoSearchTest {
 
     private WebDriver driver;
-
-    private final By inputField = By.cssSelector("#searchbox_input");
-    private final By resultLinks = By.cssSelector("h2 > a[href]");
 
     @BeforeEach
     public void setUp() {
@@ -38,29 +34,24 @@ public class SeleniumTests {
     }
 
     @Test
-    public void searchFieldTest() {
+    public void searchResultTest() {
         String input = "Selenium";
-        WebElement searchField = driver.findElement(inputField);
-        searchField.sendKeys(input);
-        searchField.submit();
+        MainPage mp = new MainPage(driver);
+        mp.sendText(input);
 
-        List<WebElement> result = driver.findElements(resultLinks);
-        clickElement(result, 0);
+        ResultsPage rp = new ResultsPage(driver);
+        rp.clickElement(0);
 
         assertEquals("https://www.selenium.dev/", driver.getCurrentUrl(), "Не та ссылка");
     }
 
     @Test
-    public void searchResultTest() {
+    public void searchFieldTest() {
         String input = "Selenium";
-        WebElement searchField = driver.findElement(inputField);
-        searchField.sendKeys(input);
+        MainPage mp = new MainPage(driver);
+        mp.sendText(input);
 
-        WebElement searchPageField = driver.findElement(inputField);
-        assertEquals(input, searchPageField.getAttribute("value"));
-    }
-
-    public void clickElement(List<WebElement> result, int num) {
-        result.get(num).click();
+        ResultsPage rp = new ResultsPage(driver);
+        assertEquals(input, rp.getTextFromSearchField(), "Текст не совпал");
     }
 }
